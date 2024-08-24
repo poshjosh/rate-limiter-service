@@ -63,8 +63,9 @@ public class PermitService {
 
     private void addRateIdHeaderValue(HttpRequestDto httpRequestDto, String value) {
         Map<String, List<String>> headers = httpRequestDto.getHeaders() == null
+                || httpRequestDto.getHeaders().isEmpty()
                 ? new HashMap<>() : new HashMap<>(httpRequestDto.getHeaders());
-        headers.put(RateLimiterConfiguration.RATE_ID_HEADER, Collections.singletonList(value));
+        headers.put(RateLimiterConfiguration.RATE_ID_HEADER, List.of(value));
         httpRequestDto.setHeaders(headers);
     }
 }

@@ -6,13 +6,10 @@ import org.springframework.lang.NonNull;
 import java.util.List;
 import java.util.Map;
 
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-@Builder
-@ToString
 public class HttpRequestDto {
     private String authType;
     private String characterEncoding;
@@ -20,7 +17,7 @@ public class HttpRequestDto {
     private String contextPath;
     private Map<String, String> cookies;
     private Map<String, List<String>> headers;
-    private Map<String, Object> attributes;
+    private Map<String, String> attributes;
     @NonNull // TODO - Add validation. Why the warning? // Must not be null or blank
     private String method;
     private Map<String, List<String>> parameters;
@@ -33,4 +30,10 @@ public class HttpRequestDto {
     @NonNull // TODO - Add validation. Why the warning? // Must not be null
     private String servletPath;
     private String sessionId;
+
+    @Override
+    public String toString() {
+        return "HttpRequestDto{" + method + ' ' + requestUri + "?sessionId=" + sessionId +
+                ", headers=" + headers + ", cookies=" + cookies + ", locales" + locales + "}";
+    }
 }

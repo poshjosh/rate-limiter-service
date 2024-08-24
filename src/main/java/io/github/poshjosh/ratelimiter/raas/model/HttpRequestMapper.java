@@ -51,8 +51,11 @@ public class HttpRequestMapper {
         }
 
         @Override public Object getAttribute(String name, Object resultIfNone) {
-            return httpRequestDto.getAttributes() == null ? resultIfNone :
-                    httpRequestDto.getAttributes().getOrDefault(name, resultIfNone);
+            if (httpRequestDto.getAttributes() == null) {
+                return resultIfNone;
+            }
+            final String attribute = httpRequestDto.getAttributes().get(name);
+            return attribute == null ? resultIfNone : attribute;
         }
 
         @Override public List<String> getParameters(String name) {

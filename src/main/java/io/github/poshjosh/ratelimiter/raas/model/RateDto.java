@@ -4,13 +4,10 @@ import lombok.*;
 
 import java.time.Duration;
 
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-@Builder
-@ToString
 public class RateDto {
     private static final Duration DEFAULT_DURATION = Duration.ofSeconds(1);
 

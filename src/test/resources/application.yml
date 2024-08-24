@@ -1,14 +1,8 @@
-spring:
-  application:
-    name: rate-limiter-service
-
-# TODO - Logging didn't show up when we put these in application.dev.yml and run in 'dev' profile.
 logging:
   level:
     ROOT: info
     #web: debug
     io.github.poshjosh: info
-#    io.github.poshjosh.ratelimiter.MatchVisitors: trace
     org.springframework: info
     #org.springframework.web.filter.CommonsRequestLoggingFilter: debug
     #    org.springframework.cache: info

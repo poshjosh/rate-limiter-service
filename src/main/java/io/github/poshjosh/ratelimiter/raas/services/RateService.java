@@ -38,6 +38,8 @@ public class RateService {
         final String id = ratesDto.getId();
         if (rateLimiterRegistry.isRegistered(id)) {
             rateLimiterRegistry.deregister(id);
+            // remove from cache, is not needed because our put below
+            // basically replaces any old value
         }
         final Rates rates = rateMapper.toEntity(ratesDto);
         rateLimiterRegistry.register(rates);

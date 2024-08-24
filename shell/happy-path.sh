@@ -26,18 +26,18 @@ log "Expected: ${data}"
 output=$(curl -s "$url")
 log "  Actual: ${output}"
 
-url="${PERMITS_URL}?rateId=${RATE_ID}&permits=1"
+url="${PERMITS_URL}/acquire?rateId=${RATE_ID}&permits=1"
 log ""
-log "PUT ${url}"
+log "PATCH ${url}"
 log "Expected: true"
-output=$(curl -s -X PUT "${url}")
+output=$(curl -s -X PATCH "${url}")
 log "  Actual: ${output}"
 
-url="${PERMITS_URL}?rateId=${RATE_ID}&permits=9"
+url="${PERMITS_URL}/acquire?rateId=${RATE_ID}&permits=9"
 log ""
-log "PUT ${url}"
+log "PATCH ${url}"
 log "Expected: false"
-output=$(curl -s -X PUT "${url}")
+output=$(curl -s -X PATCH "${url}")
 log "  Actual: ${output}"
 
 url="${RATES_URL}/${RATE_ID}"

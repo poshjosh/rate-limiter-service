@@ -11,7 +11,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class HomeRequestTest {
+class HomeRequestTest extends RedisSetup {
 
     @LocalServerPort
     private int port;
@@ -21,7 +21,7 @@ class HomeRequestTest {
 
     @Test
     void homePageShouldHaveSomeContent() {
-        assertThat(restTemplate.getForObject("http://localhost:" + port + "/", String.class))
-                .isNotBlank();
+        assertThat(restTemplate
+                .getForObject("http://localhost:" + port + "/", String.class)).isNotBlank();
     }
 }

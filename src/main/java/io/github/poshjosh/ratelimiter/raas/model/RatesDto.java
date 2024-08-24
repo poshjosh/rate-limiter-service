@@ -4,13 +4,10 @@ import lombok.*;
 
 import java.util.*;
 
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-@Builder
-@ToString
 public class RatesDto {
 
     private String parentId;

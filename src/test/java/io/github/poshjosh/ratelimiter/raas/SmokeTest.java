@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class SmokeTest {
+class SmokeTest extends RedisSetup {
 
     @Autowired HomeResource homeResource;
     @Autowired RateResource rateResource;
