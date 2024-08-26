@@ -60,12 +60,13 @@ class RateConditionHeaderTest extends RedisSetup {
         final RatesDto rates = RatesDto.builder().id(rateId).rates(List.of(rate)).build();
         restTemplate.postForObject(url("/rates"), rates, RatesDto.class);
 
-        // Acquire some permits
+        // Acquire one permit
         final String url = url("/permits/acquire?rateId=" + rateId);
         assertThat(restTemplate.exchange(
                 url, HttpMethod.PUT, request(headerName, headerValue), Boolean.class).getBody())
                 .isTrue();
 
+        // Acquire one more permit
         assertThat(restTemplate.exchange(
                 url, HttpMethod.PUT, request(headerName, headerValue), String.class).getStatusCode().value())
                 .isEqualTo(expectedStatus);
