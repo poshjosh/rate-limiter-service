@@ -4,11 +4,7 @@ import io.github.poshjosh.ratelimiter.web.core.RequestInfo;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Component
 public class HttpRequestMapper {
@@ -16,12 +12,12 @@ public class HttpRequestMapper {
             .contextPath("").method("").requestUri("").servletPath("")
             .build();
     public RequestInfo toRequestInfo(HttpRequestDto dto) {
-        return new RequestInfoImpl(dto);
+        return new HttpRequestInfo(dto);
     }
 
-    private static final class RequestInfoImpl implements RequestInfo {
+    private static final class HttpRequestInfo implements RequestInfo {
         private final HttpRequestDto httpRequestDto;
-        private RequestInfoImpl(HttpRequestDto httpRequestDto) {
+        private HttpRequestInfo(HttpRequestDto httpRequestDto) {
             this.httpRequestDto = Objects.requireNonNull(httpRequestDto);
         }
 
@@ -40,14 +36,22 @@ public class HttpRequestMapper {
         }
 
         @Override public List<Cookie> getCookies() {
-            return httpRequestDto.getCookies() == null ? Collections.emptyList() :
+            return httpRequestDto.getCookies() == null ? null :
                     httpRequestDto.getCookies().entrySet().stream()
-                    .map(e -> Cookie.of(e.getKey(), e.getValue())).collect(Collectors.toList());
+                    .map(e -> Cookie.of(e.getKey(), e.getValue())).toList();
         }
 
         @Override public List<String> getHeaders(String name) {
-            return httpRequestDto.getHeaders() == null ? Collections.emptyList() :
-                    httpRequestDto.getHeaders().getOrDefault(name, Collections.emptyList());
+            Map<String, List<String>> headers = httpRequestDto.getHeaders();
+            if (headers == null) {
+                return null;
+            }
+            for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+                if (entry.getKey().equalsIgnoreCase(name)) { // case-insensitive
+                    return entry.getValue();
+                }
+            }
+            return null;
         }
 
         @Override public Object getAttribute(String name, Object resultIfNone) {
@@ -59,8 +63,8 @@ public class HttpRequestMapper {
         }
 
         @Override public List<String> getParameters(String name) {
-            return httpRequestDto.getParameters() == null ? Collections.emptyList() :
-                    httpRequestDto.getParameters().getOrDefault(name, Collections.emptyList());
+            return httpRequestDto.getParameters() == null ? null :
+                    httpRequestDto.getParameters().getOrDefault(name, null);
         }
 
         @Override public String getRemoteAddr(String ifNone) {
@@ -68,10 +72,10 @@ public class HttpRequestMapper {
         }
 
         @Override public List<Locale> getLocales() {
-            return httpRequestDto.getLocales() == null ? Collections.emptyList() :
+            return httpRequestDto.getLocales() == null ? null :
                     httpRequestDto.getLocales().stream()
                     .map(value -> value.replace('_', '-'))
-                    .map(Locale::forLanguageTag).collect(Collectors.toList());
+                    .map(Locale::forLanguageTag).toList();
         }
 
         @Override public String getMethod() {

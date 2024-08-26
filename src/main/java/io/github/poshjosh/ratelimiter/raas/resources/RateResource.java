@@ -8,8 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -22,21 +24,24 @@ public class RateResource {
     }
 
     @PostMapping(value = {PATH+"/tree", PATH+"/tree/"})
-    public List<RatesDto> postLimits(@RequestBody Map<String, Object> rateTree)
+    public ResponseEntity<List<RatesDto>> postLimits(@RequestBody Map<String, Object> rateTree)
             throws RaasException {
         log.debug("Posting rate tree: {}", rateTree);
         try {
-            return rateService.addRateTree(rateTree);
+            List<RatesDto> ratesDto = rateService.addRateTree(rateTree);
+            String ids = ratesDto.stream().map(RatesDto::getId).collect(Collectors.joining(","));
+            return ResponseEntity.created(URI.create(PATH + "/tree/" + ids)).body(ratesDto);
         } catch (IllegalArgumentException e) {
             throw new RaasException(ExceptionMessage.BAD_REQUEST, e);
         }
     }
 
     @PostMapping(value = {PATH, PATH+"/"})
-    public RatesDto postLimit(@RequestBody RatesDto ratesDto) throws RaasException {
+    public ResponseEntity<RatesDto> postLimit(@RequestBody RatesDto ratesDto) throws RaasException {
         log.debug("Posting: {}", ratesDto);
         try {
-            return rateService.addRates(ratesDto);
+            ratesDto = rateService.addRates(ratesDto);
+            return ResponseEntity.created(URI.create(PATH + "/" + ratesDto.getId())).body(ratesDto);
         } catch (IllegalArgumentException e) {
             throw new RaasException(ExceptionMessage.BAD_REQUEST, e);
         }
@@ -50,11 +55,11 @@ public class RateResource {
     }
 
     @DeleteMapping({PATH+"/{id}", PATH+"/{id}/"})
-    public ResponseEntity<String> deleteLimit(@PathVariable String id) throws RaasException {
+    public ResponseEntity<Boolean> deleteLimit(@PathVariable String id) throws RaasException {
         log.debug("Deleting limit for id: {}", id);
         if(rateService.deleteRates(id).isEmpty()) {
             throw new RaasException(ExceptionMessage.RATES_NOT_FOUND);
         }
-        return ResponseEntity.ok("OK");
+        return ResponseEntity.ok(Boolean.TRUE);
     }
 }

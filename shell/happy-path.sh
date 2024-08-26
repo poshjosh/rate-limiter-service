@@ -43,7 +43,7 @@ log "  Actual: ${output}"
 url="${RATES_URL}/${RATE_ID}"
 log ""
 log "DELETE ${url}"
-log "Expected: OK"
+log "Expected: true"
 output=$(curl -s -X DELETE "$url")
 log "  Actual: ${output}"
 

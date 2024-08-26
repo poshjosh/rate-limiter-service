@@ -1,6 +1,6 @@
 package io.github.poshjosh.ratelimiter.raas.services;
 
-import io.github.poshjosh.ratelimiter.MatchContext;
+import io.github.poshjosh.ratelimiter.matcher.MatchContext;
 import io.github.poshjosh.ratelimiter.RateLimiterRegistry;
 import io.github.poshjosh.ratelimiter.model.Rates;
 import io.github.poshjosh.ratelimiter.raas.model.*;

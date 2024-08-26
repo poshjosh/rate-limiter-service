@@ -5,18 +5,19 @@ import io.github.poshjosh.ratelimiter.raas.model.RatesDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.parsing.Problem;
 import org.springframework.boot.devtools.remote.client.HttpHeaderInterceptor;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class HappyPathTest extends RedisSetup {
@@ -47,16 +48,19 @@ class HappyPathTest extends RedisSetup {
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(rateId);
 
-        assertThat(restTemplate.postForObject(
-                url + "/permits/available?rateId=" + rateId, null, Boolean.class)).isTrue();
+        assertThat(restTemplate.exchange(
+                        url + "/permits/available?rateId=" + rateId, HttpMethod.PUT, null, Boolean.class)
+                .getBody()).isTrue();
 
-        assertThat(restTemplate.postForObject(
-                url + "/permits/acquire?rateId=" + rateId, null, Boolean.class)).isTrue();
+        assertThat(restTemplate.exchange(
+                url + "/permits/acquire?rateId=" + rateId, HttpMethod.PUT, null, Boolean.class)
+                .getBody()).isTrue();
 
-        assertThat(restTemplate.postForObject(
-                url + "/permits/acquire?rateId=" + rateId, null, Boolean.class)).isFalse();
+        ResponseEntity<ProblemDetail> response = restTemplate.exchange(
+                url + "/permits/acquire?rateId=" + rateId, HttpMethod.PUT, null, ProblemDetail.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
 
-        restTemplate.delete(url + "/rates/" + rateId, String.class);
+        restTemplate.delete(url + "/rates/" + rateId, Boolean.class);
 
         ProblemDetail problem = restTemplate.getForObject(url + "/rates/" + rateId, ProblemDetail.class);
         assertThat(problem).isNotNull();
