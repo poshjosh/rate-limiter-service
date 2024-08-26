@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class HappyPathMockTest {
+class HappyPathMockTest extends RedisSetup {
 
     private static final String contentType = "application/json";
 
