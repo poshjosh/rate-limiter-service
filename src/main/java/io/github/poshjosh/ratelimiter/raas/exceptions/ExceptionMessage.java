@@ -4,12 +4,13 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Objects;
 
-public enum ExceptionMessage {
-    RATES_NOT_FOUND("msgs.ex.rates.not_found", HttpStatus.NOT_FOUND),
-    BAD_REQUEST("msgs.ex.request.bad"),
-    FORBIDDEN("msgs.ex.request.forbidden"),
-    CONFLICT("msgs.ex.request.conflict"),
-    TOO_MANY_REQUESTS("msgs.ex.request.too_many");
+public enum ExceptionMessage implements ExceptionMessageKey {
+    RATES_NOT_FOUND(ExceptionMessageKey.RATES_NOT_FOUND, HttpStatus.NOT_FOUND),
+    BAD_REQUEST(ExceptionMessageKey.BAD_REQUEST),
+    BAD_REQUEST_PERMITS(INVALID_FORMAT_PERMITS, HttpStatus.BAD_REQUEST),
+    BAD_REQUEST_RATES(INVALID_FORMAT_RATES, HttpStatus.BAD_REQUEST),
+    FORBIDDEN(ExceptionMessageKey.FORBIDDEN),
+    TOO_MANY_REQUESTS(ExceptionMessageKey.TOO_MANY_REQUESTS);
 
     public final String key;
     public final HttpStatus status;

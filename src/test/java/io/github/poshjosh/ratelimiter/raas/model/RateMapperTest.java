@@ -2,6 +2,7 @@ package io.github.poshjosh.ratelimiter.raas.model;
 
 import io.github.poshjosh.ratelimiter.model.Rate;
 import io.github.poshjosh.ratelimiter.model.Rates;
+import io.github.poshjosh.ratelimiter.raas.exceptions.RaasException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -66,7 +67,8 @@ class RateMapperTest {
             "'', 99, PT3M, condition, ''"
     })
     void toRateDto_shouldReturnValidDto(
-            String rate, long permits, Duration duration, String when, String factoryClass) {
+            String rate, long permits, Duration duration, String when, String factoryClass)
+            throws RaasException {
         Map<String, Object> rateMap = rateMapOf(rate, permits, duration, when, factoryClass);
         RateDto dto = rateMapper.toRateDto(rateMap);
         assertThat(dto.getRate()).isEqualTo(rate);
@@ -85,8 +87,7 @@ class RateMapperTest {
     void toRateDto_shouldFail_givenInvalidMap(
             String rate, long permits, Duration duration, String when, String factoryClass) {
         Map<String, Object> rateMap = rateMapOf(rate, permits, duration, when, factoryClass);
-        assertThatThrownBy(() -> rateMapper.toRateDto(rateMap))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> rateMapper.toRateDto(rateMap)).isInstanceOf(RaasException.class);
     }
 
 
@@ -97,7 +98,8 @@ class RateMapperTest {
     })
     void toRatesDto_shouldReturnValidDto(
             String parentId, String id, Operator operator, String globalWhen,
-            String rate, long permits, Duration duration, String when, String factoryClass) {
+            String rate, long permits, Duration duration, String when, String factoryClass)
+            throws RaasException {
         Map<String, Object> ratesMap = ratesMapOf(
                 parentId, id, operator, globalWhen,
                 rate, permits, duration, when, factoryClass);
@@ -121,8 +123,7 @@ class RateMapperTest {
         Map<String, Object> ratesMap = ratesMapOf(
                 parentId, id, operator, globalWhen,
                 rate, permits, duration, when, factoryClass);
-        assertThatThrownBy(() -> rateMapper.toRatesDto(ratesMap))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> rateMapper.toRatesDto(ratesMap)).isInstanceOf(RaasException.class);
     }
 
     Map<String, Object> ratesMapOf(
@@ -145,7 +146,7 @@ class RateMapperTest {
     }
 
     @Test
-    void toDtos_shouldReturnValidDtos() {
+    void toDtos_shouldReturnValidDtos() throws RaasException {
         Map<String, Object> validTree = givenValidTree();
         List<RatesDto> result = rateMapper.toDtos(validTree);
         final String [] ids = {"parent", "child", "grandChild1", "grandChild2", "greatGrandChild"};

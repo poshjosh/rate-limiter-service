@@ -4,6 +4,7 @@ import io.github.poshjosh.ratelimiter.raas.exceptions.ExceptionMessage;
 import io.github.poshjosh.ratelimiter.raas.exceptions.RaasException;
 import io.github.poshjosh.ratelimiter.raas.model.RatesDto;
 import io.github.poshjosh.ratelimiter.raas.services.RateService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,27 +25,19 @@ public class RateResource {
     }
 
     @PostMapping(value = {PATH+"/tree", PATH+"/tree/"})
-    public ResponseEntity<List<RatesDto>> postLimits(@RequestBody Map<String, Object> rateTree)
+    public ResponseEntity<List<RatesDto>> postRates(@Valid @RequestBody Map<String, Object> rateTree)
             throws RaasException {
         log.debug("Posting rate tree: {}", rateTree);
-        try {
-            List<RatesDto> ratesDto = rateService.addRateTree(rateTree);
-            String ids = ratesDto.stream().map(RatesDto::getId).collect(Collectors.joining(","));
-            return ResponseEntity.created(URI.create(PATH + "/tree/" + ids)).body(ratesDto);
-        } catch (IllegalArgumentException e) {
-            throw new RaasException(ExceptionMessage.BAD_REQUEST, e);
-        }
+        List<RatesDto> ratesDto = rateService.addRateTree(rateTree);
+        String ids = ratesDto.stream().map(RatesDto::getId).collect(Collectors.joining(","));
+        return ResponseEntity.created(URI.create(PATH + "/tree/" + ids)).body(ratesDto);
     }
 
     @PostMapping(value = {PATH, PATH+"/"})
-    public ResponseEntity<RatesDto> postLimit(@RequestBody RatesDto ratesDto) throws RaasException {
+    public ResponseEntity<RatesDto> postRates(@Valid @RequestBody RatesDto ratesDto) {
         log.debug("Posting: {}", ratesDto);
-        try {
-            ratesDto = rateService.addRates(ratesDto);
-            return ResponseEntity.created(URI.create(PATH + "/" + ratesDto.getId())).body(ratesDto);
-        } catch (IllegalArgumentException e) {
-            throw new RaasException(ExceptionMessage.BAD_REQUEST, e);
-        }
+        ratesDto = rateService.addRates(ratesDto);
+        return ResponseEntity.created(URI.create(PATH + "/" + ratesDto.getId())).body(ratesDto);
     }
 
     @GetMapping({PATH+"/{id}", PATH+"/{id}/"})

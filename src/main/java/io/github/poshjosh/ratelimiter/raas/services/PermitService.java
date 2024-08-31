@@ -14,7 +14,6 @@ import java.util.*;
 @Slf4j
 @Service
 public class PermitService {
-
     private final HttpRequestMapper httpRequestMapper;
 
     private final RateLimiterRegistry<RequestInfo> rateLimiterRegistry;
@@ -24,15 +23,6 @@ public class PermitService {
             RateLimiterRegistry<RequestInfo> rateLimiterRegistry) {
         this.httpRequestMapper = httpRequestMapper;
         this.rateLimiterRegistry = rateLimiterRegistry;
-    }
-
-    @Async
-    public void tryAcquireAsync(String rateId, int permits) {
-        tryAcquire(rateId, permits);
-    }
-
-    public boolean tryAcquire(String rateId, int permits) {
-        return tryAcquire(rateId, permits, HttpRequestMapper.NOOP_REQUEST_DTO);
     }
 
     @Async
@@ -47,10 +37,6 @@ public class PermitService {
         log.debug("Acquired {}, {} permits from rate: {} for {}",
                 acquired, permits, rateId, httpRequestDto);
         return acquired;
-    }
-
-    public boolean isAvailable(String rateId) {
-        return isAvailable(rateId, HttpRequestMapper.NOOP_REQUEST_DTO);
     }
 
     public boolean isAvailable(String rateId, HttpRequestDto httpRequestDto) {

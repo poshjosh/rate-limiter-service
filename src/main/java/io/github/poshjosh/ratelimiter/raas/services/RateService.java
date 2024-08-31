@@ -3,6 +3,7 @@ package io.github.poshjosh.ratelimiter.raas.services;
 import io.github.poshjosh.ratelimiter.matcher.MatchContext;
 import io.github.poshjosh.ratelimiter.RateLimiterRegistry;
 import io.github.poshjosh.ratelimiter.model.Rates;
+import io.github.poshjosh.ratelimiter.raas.exceptions.RaasException;
 import io.github.poshjosh.ratelimiter.raas.model.*;
 import io.github.poshjosh.ratelimiter.raas.redis.RedisRatesCache;
 import io.github.poshjosh.ratelimiter.web.core.RequestInfo;
@@ -28,7 +29,7 @@ public class RateService {
         this.rateLimiterRegistry = rateLimiterRegistry;
     }
 
-    public List<RatesDto> addRateTree(Map<String, Object> limitTree) throws IllegalArgumentException {
+    public List<RatesDto> addRateTree(Map<String, Object> limitTree) throws RaasException {
         final List<RatesDto> rates = rateMapper.toDtos(limitTree);
         rates.forEach(this::addRates);
         return rates;

@@ -3,6 +3,8 @@ package io.github.poshjosh.ratelimiter.raas.model;
 import io.github.poshjosh.ratelimiter.annotations.VisibleForTesting;
 import io.github.poshjosh.ratelimiter.model.Rate;
 import io.github.poshjosh.ratelimiter.model.Rates;
+import io.github.poshjosh.ratelimiter.raas.exceptions.ExceptionMessage;
+import io.github.poshjosh.ratelimiter.raas.exceptions.RaasException;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -15,7 +17,6 @@ import java.util.stream.Collectors;
 public class RateMapper {
 
     public Rates toEntity(RatesDto dto) {
-        dto.validate();
         final Operator optr = dto.getOperator();
         final io.github.poshjosh.ratelimiter.model.Operator operator =
                 optr == null ? null :
@@ -33,7 +34,6 @@ public class RateMapper {
     }
 
     public Rate toEntity(RateDto dto) {
-        dto.validate();
         return new Rate().permits(dto.getPermits())
                 .duration(dto.getDuration())
                 .rate(dto.getRate())
@@ -92,14 +92,16 @@ public class RateMapper {
      *
      * @param tree The tree of rates to convert to a list of {@link RatesDto} objects.
      * @return The list of {@link RatesDto} objects.
+     * @throws RaasException if the input Map contains badly values of the wrong format.
      */
-    public List<RatesDto> toDtos(Map<String, Object> tree) {
+    public List<RatesDto> toDtos(Map<String, Object> tree) throws RaasException {
         final List<RatesDto> result = new ArrayList<>();
         collectTree(stringValue(tree, "id"), tree, result::add);
         return Collections.unmodifiableList(result);
     }
 
-    private void collectTree(String id, Map<String, Object> tree, Consumer<RatesDto> consumer) {
+    private void collectTree(String id, Map<String, Object> tree, Consumer<RatesDto> consumer)
+            throws RaasException {
 
         final Map<String, Object> target = collectNonNullLeafValues(tree);
         if (id != null) {
@@ -107,34 +109,42 @@ public class RateMapper {
         }
         consumer.accept(toRatesDto(target));
 
-        tree.forEach((key, val) -> {
+        for (Map.Entry<String, Object> entry : tree.entrySet()) {
+            final Object val = entry.getValue();
             if (val instanceof Map) {
                 Map<String, Object> child = (Map<String, Object>)val;
                 if (id != null) {
                     child.put("parentId", id); // Takes precedence over any specified in map
                 }
-                collectTree(key, child, consumer);
+                collectTree(entry.getKey(), child, consumer);
             }
-        });
+        }
     }
 
     @VisibleForTesting
-    RatesDto toRatesDto(Map<String, Object> map) {
+    RatesDto toRatesDto(Map<String, Object> map) throws RaasException {
         final String operatorStr = stringValue(map, "operator");
         final Object ratesObj = map.get("rates");
         if (ratesObj != null && !(ratesObj instanceof List)) {
-            throw new IllegalArgumentException("Invalid rates: " + ratesObj);
+            throw new RaasException(ExceptionMessage.BAD_REQUEST_RATES);
         }
         final List<Map<String, Object>> rates = (List<Map<String, Object>>)ratesObj;
-        final RatesDto ratesDto = RatesDto.builder()
+        final List<RateDto> rateDtos;
+        if (rates == null) {
+            rateDtos = null;
+        } else {
+            rateDtos = new ArrayList<>(rates.size());
+            for(Map<String, Object> rate : rates) {
+                rateDtos.add(toRateDto(rate));
+            }
+        }
+        return RatesDto.builder()
                 .operator(operatorStr == null || operatorStr.isBlank() ? null : Operator.valueOf(operatorStr))
                 .parentId(stringValue(map, "parentId"))
                 .id(stringValue(map, "id"))
                 .when(stringValue(map, "when"))
-                .rates(rates == null ? null : rates.stream().map(this::toRateDto).toList())
+                .rates(rateDtos)
                 .build();
-        ratesDto.validate();
-        return ratesDto;
     }
 
     @VisibleForTesting
@@ -153,17 +163,15 @@ public class RateMapper {
     }
 
     @VisibleForTesting
-    RateDto toRateDto(Map<String, Object> map) {
+    RateDto toRateDto(Map<String, Object> map) throws RaasException {
         final String durationText = stringValue(map, "duration");
-        final RateDto rateDto = RateDto.builder()
+        return RateDto.builder()
                 .rate(stringValue(map, "rate"))
-                .permits(longValue(map, "permits"))
+                .permits(permits(map))
                 .duration(durationText == null || durationText.isBlank() ? null : Duration.parse(durationText))
                 .when(stringValue(map, "when"))
                 .factoryClass(stringValue(map, "factoryClass"))
                 .build();
-        rateDto.validate();
-        return rateDto;
     }
 
     @VisibleForTesting
@@ -197,12 +205,12 @@ public class RateMapper {
         final Object val = map.get(key);
         return val == null ? null : val.toString();
     }
-    private long longValue(Map<String, Object> map, String key) {
-        final Object val = map.get(key);
+    private long permits(Map<String, Object> map) throws RaasException {
+        final Object val = map.get("permits");
         try {
             return val == null ? 0 : Long.parseLong(val.toString());
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid value for " + key + ": " + val);
+            throw new RaasException(ExceptionMessage.BAD_REQUEST_PERMITS);
         }
     }
 }

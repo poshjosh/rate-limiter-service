@@ -1,5 +1,7 @@
 package io.github.poshjosh.ratelimiter.raas.model;
 
+import io.github.poshjosh.ratelimiter.raas.model.validation.JavaClassConstraint;
+import io.github.poshjosh.ratelimiter.raas.model.validation.RateMismatchConstraint;
 import lombok.*;
 
 import java.time.Duration;
@@ -8,6 +10,7 @@ import java.time.Duration;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@RateMismatchConstraint
 public class RateDto {
     private static final Duration DEFAULT_DURATION = Duration.ofSeconds(1);
 
@@ -23,24 +26,6 @@ public class RateDto {
     private String when = "";
 
     @Builder.Default
+    @JavaClassConstraint(message = "load.failed.factoryClass")
     private String factoryClass = "";
-
-    public void validate() {
-        // TODO Use spring boot custom validation
-        if ((rate == null || rate.isBlank()) && permits < 1) {
-            throw new IllegalArgumentException(
-                    "Specify either rate or permits.");
-        }
-        if ((rate != null && !rate.isBlank()) && permits > 0) {
-            throw new IllegalArgumentException(
-                    "Specify either rate or permits, not both.");
-        }
-        if (factoryClass != null && !factoryClass.isBlank()) {
-            try {
-                Class.forName(factoryClass);
-            } catch (ClassNotFoundException e) {
-                throw new IllegalArgumentException("Invalid factoryClass: " + factoryClass);
-            }
-        }
-    }
 }

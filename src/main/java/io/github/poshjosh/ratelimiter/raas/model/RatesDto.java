@@ -1,5 +1,9 @@
 package io.github.poshjosh.ratelimiter.raas.model;
 
+import io.github.poshjosh.ratelimiter.raas.model.validation.RatesOperatorConstraint;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.*;
@@ -8,30 +12,20 @@ import java.util.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@RatesOperatorConstraint
 public class RatesDto {
 
     private String parentId;
 
+    @NotBlank(message = "required.id")
     private String id;
 
     @Builder.Default
+    @NotNull
     private Operator operator = Operator.NONE;
 
+    @NotEmpty(message = "required.rates")
     private List<RateDto> rates;
 
     private String when;
-
-    public void validate() {
-        if (id == null || id.isBlank()) {
-            throw new IllegalArgumentException("RatesDto##id is required.");
-        }
-        if ((operator == null || operator == Operator.NONE) && rates.size() > 1) {
-            throw new IllegalArgumentException(
-                    "RatesDto#operator is required, when there are more than one rates");
-        }
-        if ((rates == null || rates.isEmpty())) {
-            throw new IllegalArgumentException("RatesDto#rate is required");
-        }
-        rates.forEach(RateDto::validate);
-    }
 }

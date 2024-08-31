@@ -1,7 +1,8 @@
 package io.github.poshjosh.ratelimiter.raas.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.lang.NonNull;
 
 import java.util.List;
 import java.util.Map;
@@ -11,23 +12,25 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HttpRequestDto {
+    public static final HttpRequestDto NOOP = HttpRequestDto.builder()
+            .contextPath("").method("").requestUri("").servletPath("").build();
     private String authType;
     private String characterEncoding;
-    @NonNull // TODO - Add validation. Why the warning? // Must not be null
+    @NotNull(message = "required.contextPath")
     private String contextPath;
     private Map<String, String> cookies;
     private Map<String, List<String>> headers;
     private Map<String, String> attributes;
-    @NonNull // TODO - Add validation. Why the warning? // Must not be null or blank
+    @NotBlank(message = "required.method")
     private String method;
     private Map<String, List<String>> parameters;
     private String remoteAddr;
     private List<String> locales;
     private List<String> userRoles;
     private String userPrincipal;
-    @NonNull // TODO - Add validation. Why the warning? // Must not be null or blank
+    @NotBlank(message = "required.requestUri")
     private String requestUri;
-    @NonNull // TODO - Add validation. Why the warning? // Must not be null
+    @NotNull(message = "required.servletPath")
     private String servletPath;
     private String sessionId;
 

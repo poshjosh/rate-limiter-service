@@ -8,9 +8,6 @@ import java.util.*;
 
 @Component
 public class HttpRequestMapper {
-    public static final HttpRequestDto NOOP_REQUEST_DTO = HttpRequestDto.builder()
-            .contextPath("").method("").requestUri("").servletPath("")
-            .build();
     public RequestInfo toRequestInfo(HttpRequestDto dto) {
         return new HttpRequestInfo(dto);
     }

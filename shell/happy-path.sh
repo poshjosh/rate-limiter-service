@@ -36,7 +36,7 @@ log "  Actual: ${output}"
 url="${PERMITS_URL}/acquire?rateId=${RATE_ID}&permits=9"
 log ""
 log "PATCH ${url}"
-log "Expected: false"
+log "Expected: {\"type\":\"about:blank\",\"title\":\"Too Many Requests\",\"status\":429,\"detail\":\"Too many requests.\",\"instance\":\"uri=/permits/acquire\"}"
 output=$(curl -s -X PATCH "${url}")
 log "  Actual: ${output}"
 
