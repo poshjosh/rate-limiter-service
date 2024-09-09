@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # On macos, we need to install coreutils to get gnu date
 # This next line is done to use gnu date as default.
 # See https://apple.stackexchange.com/questions/135742/time-in-milliseconds-since-epoch-in-the-terminal
