@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE_URL="http://localhost:5555" # Confirm actual value of port
+BASE_URL="http://localhost:8080" # Confirm actual value of port
 RATES_URL="${BASE_URL}/rates"
 PERMITS_URL="${BASE_URL}/permits"
 RATE_ID="test-rate"

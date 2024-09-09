@@ -29,9 +29,9 @@ services:
       dockerfile: Dockerfile
     image: rate-limiter-service:latest
     expose:
-      - "5555"
+      - "${SERVER_PORT:-8080}"
     ports:
-      - "5555:5555"
+      - "${SERVER_PORT:-8080}:${SERVER_PORT:-8080}"
     networks:
       - app-network
     restart: unless-stopped
@@ -44,7 +44,7 @@ services:
       APP_MAIN_CLASS: "${APP_MAIN_CLASS:-io.github.poshjosh.ratelimiter.raas.RateLimiterServiceApplication}"
       JVM_XMS: "${JVM_XMS:-1g}"
       JVM_XMX: "${JVM_XMX:-1g}"
-      SERVER_PORT: "${SERVER_PORT:-5555}"
+      SERVER_PORT: "${SERVER_PORT:-8080}"
       SPRING_DATA_REDIS_HOST: "${SPRING_DATA_REDIS_HOST:-redis-cache}"
       SPRING_DATA_REDIS_PORT: "${SPRING_DATA_REDIS_PORT:-6379}"
       SPRING_DATA_REDIS_DATABASE: "${SPRING_DATA_REDIS_DATABASE:-0}"
