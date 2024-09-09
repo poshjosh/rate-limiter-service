@@ -1,4 +1,8 @@
 #!/bin/bash
+# On macos, we need to install coreutils to get gnu date
+# This next line is done to use gnu date as default.
+# See https://apple.stackexchange.com/questions/135742/time-in-milliseconds-since-epoch-in-the-terminal
+export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
 
 BASE_URL="http://localhost:8080" # Confirm actual value of port
 RATES_URL="${BASE_URL}/rates"
@@ -6,7 +10,7 @@ PERMITS_URL="${BASE_URL}/permits"
 RATE_ID="test-rate"
 
 function log() {
-  printf "%s %s\n" "$(date +'%T')" "$1"
+  printf "%s %s\n" "$(date +'%T.%3N')" "$1"
 }
 
 data="{ \"id\":\"${RATE_ID}\", \"rates\":[{ \"rate\":\"1/s\" }] }"
