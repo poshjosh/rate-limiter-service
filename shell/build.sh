@@ -27,11 +27,10 @@ fi
 # We disable the need for double quotes here, as using double quotes caused errors.
 # TODO - Tests are not running - Fix it
 if [ -z ${GPG_PASS+x} ] || [ "$GPG_PASS" = "" ]; then
-    mvn -s "$SETTINGS_FILE" clean verify $DEBUG -Dspring.profiles.active=dev
+    mvn -s "$SETTINGS_FILE" clean verify $DEBUG
     echo "Build SUCCESSFUL"
 else
-    mvn -s "$SETTINGS_FILE" clean deploy $DEBUG -Dspring.profiles.active=dev \
-    -P release -Dgpg.passphrase=$GPG_PASS
+    mvn -s "$SETTINGS_FILE" clean deploy $DEBUG -P release -Dgpg.passphrase=$GPG_PASS
     echo "Release SUCCESSFUL"
     echo "Please browse to https://s01.oss.sonatype.org/#stagingRepositories and manually confirm the release."
 fi
