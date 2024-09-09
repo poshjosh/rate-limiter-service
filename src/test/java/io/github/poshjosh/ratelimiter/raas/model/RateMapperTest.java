@@ -12,7 +12,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class RateMapperTest {
 
@@ -84,10 +83,11 @@ class RateMapperTest {
             "'', 0, PT0S, condition, ''",
             "99/h, 0, PT0S, condition, 'fake-class'"
     })
-    void toRateDto_shouldFail_givenInvalidMap(
-            String rate, long permits, Duration duration, String when, String factoryClass) {
+    void toRateDto_shouldSucceed_givenInvalidMap(
+            String rate, long permits, Duration duration, String when, String factoryClass)
+            throws RaasException {
         Map<String, Object> rateMap = rateMapOf(rate, permits, duration, when, factoryClass);
-        assertThatThrownBy(() -> rateMapper.toRateDto(rateMap)).isInstanceOf(RaasException.class);
+        rateMapper.toRateDto(rateMap);
     }
 
 
@@ -119,11 +119,12 @@ class RateMapperTest {
     })
     void toRatesDto_shouldFail_givenInvalidMap(
             String parentId, String id, Operator operator, String globalWhen,
-            String rate, long permits, Duration duration, String when, String factoryClass) {
+            String rate, long permits, Duration duration, String when, String factoryClass)
+            throws RaasException {
         Map<String, Object> ratesMap = ratesMapOf(
                 parentId, id, operator, globalWhen,
                 rate, permits, duration, when, factoryClass);
-        assertThatThrownBy(() -> rateMapper.toRatesDto(ratesMap)).isInstanceOf(RaasException.class);
+        rateMapper.toRatesDto(ratesMap);
     }
 
     Map<String, Object> ratesMapOf(

@@ -1,8 +1,9 @@
 package io.github.poshjosh.ratelimiter.raas.resources;
 
-import io.github.poshjosh.ratelimiter.raas.RedisSetup;
+import io.github.poshjosh.ratelimiter.raas.cache.RedisInitializer;
 import io.github.poshjosh.ratelimiter.raas.model.RateDto;
 import io.github.poshjosh.ratelimiter.raas.model.RatesDto;
+import io.github.poshjosh.ratelimiter.raas.persistence.InitializeS3Bucket;
 import io.github.poshjosh.ratelimiter.raas.services.RateService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
@@ -23,10 +23,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
+@InitializeS3Bucket
 @AutoConfigureMockMvc
-class RateSourceTest extends RedisSetup {
+class RateSourceTest implements RedisInitializer {
 
     private static final MediaType contentType = MediaType.APPLICATION_JSON;
+    private static final String idError = "required.id";
+    private static final String ratesError = "required.rates";
 
     @Autowired private MockMvc mockMvc;
     @Autowired private MessageSource messageSource;
@@ -50,14 +53,27 @@ class RateSourceTest extends RedisSetup {
     void shouldNotPostInvalidRates() throws Exception {
         final String ratesJson = "{\"id\":\"\",\"rates\":[]}";
         final String expectedIdError = messageSource
-                .getMessage("required.id", null, Locale.getDefault());
+                .getMessage(idError, null, Locale.getDefault());
         final String expectedRatesError = messageSource
-                .getMessage("required.rates", null, Locale.getDefault());
+                .getMessage(ratesError, null, Locale.getDefault());
         mockMvc.perform(post(RateResource.PATH).contentType(contentType).content(ratesJson))
                 .andDo(print()).andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.detail").value(containsString(expectedIdError)))
                 .andExpect(jsonPath("$.detail").value(containsString(expectedRatesError)));
 
+    }
+
+    @Test
+    void shouldPostValidRatesTree() throws Exception {
+        final String rateId = this.getClass().getSimpleName();
+        final Map<String, Object> rate = Map.of("rate", "1/s");
+        final Map<String, Object> rates = Map.of("id", rateId, "rates", List.of(rate));
+        final String ratesJson = "{\"id\":\"" + rateId + "\",\"rates\":[{\"rate\":\"1/s\"}]}";
+
+        when(rateService.addRateTree(rates)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(post(RateResource.PATH+"/tree").contentType(contentType).content(ratesJson))
+                .andDo(print()).andExpect(status().isCreated());
     }
 }

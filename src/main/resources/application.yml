@@ -1,6 +1,20 @@
 spring:
   application:
     name: rate-limiter-service
+  cloud:
+    aws:
+      credentials:
+        access-key: ${AWS_ACCESS_KEY}
+        secret-key: ${AWS_SECRET_KEY}
+      s3:
+        region: ${AWS_S3_REGION:us-east-2}
+app:
+  aws:
+    s3:
+      bucket-name: ${AWS_S3_BUCKET:raas-bucket}
+  redis:
+    data-dir: ${APP_REDIS_DATA_DIR:/data}
+    backup-interval: ${APP_REDIS_BACKUP_INTERVAL:20}
 
 # TODO - Logging didn't show up when we put these in application.dev.yml and run in 'dev' profile.
 logging:

@@ -1,5 +1,66 @@
+version: '3'
 services:
-  redis:
-    image: 'redis:latest'
+  redis-cache:
+    image: redis:7.0-alpine
+    env_file:
+      - .env
+    environment:
+      TIME_ZONE: "${TIME_ZONE:-UTC}"
+    expose:
+      - "${SPRING_DATA_REDIS_PORT:-6379}"
     ports:
-      - '6379'
+      - "${SPRING_DATA_REDIS_PORT:-6379}:${SPRING_DATA_REDIS_PORT:-6379}"
+    networks:
+      - app-network
+    restart: unless-stopped
+    # --save 20 1 instructs the redis server to save the dataset to disk every 20 seconds,
+    # if there are one or more writes
+    command: redis-server --save $APP_REDIS_BACKUP_INTERVAL 1 --loglevel debug
+    volumes:
+      # Other services access the Redis dump.rdb file from this directory
+      - "redis-cache:${APP_REDIS_DATA_DIR:-/data}"
+#      - type: bind
+#        source: "redis-cache"
+#        target: "${APP_REDIS_DATA_DIR:-/data}"
+
+  ratelimiter-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rate-limiter-service:latest
+    expose:
+      - "5555"
+    ports:
+      - "5555:5555"
+    networks:
+      - app-network
+    restart: unless-stopped
+    depends_on:
+      - redis-cache
+    env_file:
+      - .env
+    environment:
+      TIME_ZONE: "${TIME_ZONE:-UTC}"
+      APP_MAIN_CLASS: "${APP_MAIN_CLASS:-io.github.poshjosh.ratelimiter.raas.RateLimiterServiceApplication}"
+      JVM_XMS: "${JVM_XMS:-1g}"
+      JVM_XMX: "${JVM_XMX:-1g}"
+      SERVER_PORT: "${SERVER_PORT:-5555}"
+      SPRING_DATA_REDIS_HOST: "${SPRING_DATA_REDIS_HOST:-redis-cache}"
+      SPRING_DATA_REDIS_PORT: "${SPRING_DATA_REDIS_PORT:-6379}"
+      SPRING_DATA_REDIS_DATABASE: "${SPRING_DATA_REDIS_DATABASE:-0}"
+      SPRING_DATA_REDIS_TIMEOUT: "${SPRING_DATA_REDIS_TIMEOUT:-60000}"
+      SPRING_CACHE_TYPE: "${SPRING_CACHE_TYPE:-redis}"
+      SPRING_CACHE_REDIS_CACHE_NULL_VALUES: "${SPRING_CACHE_REDIS_CACHE_NULL_VALUES:-false}"
+#      logging.level.io.github.poshjosh.ratelimiter.raas.persistence: "debug"
+#      logging.level.org.springframework: "debug"
+#      logging.level.io.github.poshjosh: "debug"
+    volumes:
+      # We back up the Redis dump.rdb file from this directory
+      - "redis-cache:${APP_REDIS_DATA_DIR:-/data}"
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  redis-cache:

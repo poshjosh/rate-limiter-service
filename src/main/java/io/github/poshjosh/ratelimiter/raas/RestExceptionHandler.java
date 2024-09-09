@@ -2,6 +2,8 @@ package io.github.poshjosh.ratelimiter.raas;
 
 import io.github.poshjosh.ratelimiter.raas.exceptions.ExceptionMessage;
 import io.github.poshjosh.ratelimiter.raas.exceptions.RaasException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.*;
@@ -18,6 +20,7 @@ import java.util.*;
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private final String defaultMessage = "Error";
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers,
@@ -32,6 +35,19 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return handle(ex, headers, status, request, keys.toArray(new String[0]));
     }
 
+    @ExceptionHandler ({ ConstraintViolationException.class} )
+    protected ResponseEntity<Object> handleConstraintViolationException(
+            ConstraintViolationException ex, WebRequest request) {
+        List<String> keys = ex.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
+                .filter(Objects::nonNull)
+                .toList();
+        if (keys.isEmpty()) {
+            return handle(ex, request, ExceptionMessage.BAD_REQUEST);
+        }
+        return handle(ex, request, keys.toArray(new String[0]));
+    }
+
     @ExceptionHandler({ RaasException.class })
     protected ResponseEntity<Object> handleRaasException(RaasException ex, WebRequest request) {
         return handle(ex, request, ex.getExceptionMessage());
@@ -40,6 +56,16 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ AccessDeniedException.class })
     protected ResponseEntity<Object> handleAccessDeniedException(Exception ex, WebRequest request) {
         return handle(ex, request, ExceptionMessage.FORBIDDEN);
+    }
+
+    private ResponseEntity<Object> handle(
+            Exception ex, WebRequest request, String ...keys) {
+        ExceptionMessage [] msgs = Arrays.stream(keys)
+                .map(ExceptionMessage::ofKey)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList().toArray(new ExceptionMessage[0]);
+        return handle(ex, request, msgs);
     }
 
     private ResponseEntity<Object> handle(

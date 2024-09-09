@@ -1,0 +1,12 @@
+# Ignore everything
+*
+
+# Exclude these from ignored
+!target/
+!Dockerfile
+!docker-entrypoint.sh
+
+# Ignore unnecessary files inside allowed directories
+# This should go after the allowed directories
+**/.DS_Store
+**/Thumbs.db

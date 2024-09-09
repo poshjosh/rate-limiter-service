@@ -4,6 +4,7 @@ import io.github.poshjosh.ratelimiter.raas.exceptions.ExceptionMessage;
 import io.github.poshjosh.ratelimiter.raas.exceptions.RaasException;
 import io.github.poshjosh.ratelimiter.raas.model.RatesDto;
 import io.github.poshjosh.ratelimiter.raas.services.RateService;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class RateResource {
 
     @PostMapping(value = {PATH+"/tree", PATH+"/tree/"})
     public ResponseEntity<List<RatesDto>> postRates(@Valid @RequestBody Map<String, Object> rateTree)
-            throws RaasException {
+            throws RaasException, ConstraintViolationException {
         log.debug("Posting rate tree: {}", rateTree);
         List<RatesDto> ratesDto = rateService.addRateTree(rateTree);
         String ids = ratesDto.stream().map(RatesDto::getId).collect(Collectors.joining(","));

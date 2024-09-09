@@ -1,8 +1,33 @@
+spring:
+  application:
+    name: rate-limiter-service
+  cloud:
+    aws:
+      credentials:
+        access-key:
+        secret-key:
+      s3:
+        region: us-east-2
+
+app:
+  aws:
+    s3:
+      # Must match bucket name in src/test/resources/init-s3-bucket.sh
+      bucket-name: test-raas-bucket
+  redis:
+    data-dir: /data
+    backup-interval: 3
+
+# TODO - Logging didn't show up when we put these in application.dev.yml and run in 'dev' profile.
 logging:
   level:
     ROOT: info
     #web: debug
     io.github.poshjosh: info
+    #    io.github.poshjosh.ratelimiter.raas.resources: trace
+    #    io.github.poshjosh.ratelimiter.raas.services: trace
+    #    io.github.poshjosh.ratelimiter.matcher.DefaultMatchContext: trace
+    #    io.github.poshjosh.ratelimiter.matcher.MatchVisitors: trace
     org.springframework: info
     #org.springframework.web.filter.CommonsRequestLoggingFilter: debug
     #    org.springframework.cache: info

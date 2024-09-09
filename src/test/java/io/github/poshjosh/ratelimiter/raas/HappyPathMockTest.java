@@ -5,9 +5,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import io.github.poshjosh.ratelimiter.raas.cache.RedisInitializer;
 import io.github.poshjosh.ratelimiter.raas.model.HttpRequestDto;
 import io.github.poshjosh.ratelimiter.raas.model.RateDto;
 import io.github.poshjosh.ratelimiter.raas.model.RatesDto;
+import io.github.poshjosh.ratelimiter.raas.persistence.InitializeS3Bucket;
 import io.github.poshjosh.ratelimiter.raas.resources.PermitResource;
 import io.github.poshjosh.ratelimiter.raas.resources.RateResource;
 import io.github.poshjosh.ratelimiter.raas.services.PermitService;
@@ -25,8 +27,9 @@ import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
+@InitializeS3Bucket
 @AutoConfigureMockMvc
-class HappyPathMockTest extends RedisSetup {
+class HappyPathMockTest implements RedisInitializer {
 
     private static final MediaType contentType = MediaType.APPLICATION_JSON;
 
@@ -35,7 +38,7 @@ class HappyPathMockTest extends RedisSetup {
     @MockBean private PermitService permitService;
 
     @Test
-    void test() throws Exception {
+    void testHappyPath() throws Exception {
         final String rateId = this.getClass().getSimpleName();
         final RateDto rate = RateDto.builder().rate("1/s").build();
         final RatesDto rates = RatesDto.builder().id(rateId).rates(List.of(rate)).build();

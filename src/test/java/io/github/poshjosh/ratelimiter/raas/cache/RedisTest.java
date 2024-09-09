@@ -1,13 +1,13 @@
-package io.github.poshjosh.ratelimiter.raas;
+package io.github.poshjosh.ratelimiter.raas.cache;
 
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class RedisTest extends RedisSetup {
+class RedisTest implements RedisInitializer {
 
     @Test
     void givenRedisContainerConfiguredWithDynamicProperties_thenContainerShouldBeRunning() {
-        assertTrue(getRedisContainer().isRunning());
+        assertTrue(REDIS_CONTAINER.isRunning());
     }
 }

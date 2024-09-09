@@ -1,7 +1,9 @@
 package io.github.poshjosh.ratelimiter.raas;
 
+import io.github.poshjosh.ratelimiter.raas.cache.RedisInitializer;
 import io.github.poshjosh.ratelimiter.raas.model.RateDto;
 import io.github.poshjosh.ratelimiter.raas.model.RatesDto;
+import io.github.poshjosh.ratelimiter.raas.persistence.InitializeS3Bucket;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +21,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@InitializeS3Bucket
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class HappyPathTest extends RedisSetup {
+class HappyPathTest implements RedisInitializer {
 
     @LocalServerPort
     private int port;
@@ -35,7 +38,7 @@ class HappyPathTest extends RedisSetup {
     }
 
     @Test
-    void test() {
+    void testHappyPath() {
         final String url = "http://localhost:" + port ;
 
         final String rateId = this.getClass().getSimpleName();

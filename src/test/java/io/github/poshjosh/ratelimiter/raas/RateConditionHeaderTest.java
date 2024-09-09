@@ -1,8 +1,10 @@
 package io.github.poshjosh.ratelimiter.raas;
 
+import io.github.poshjosh.ratelimiter.raas.cache.RedisInitializer;
 import io.github.poshjosh.ratelimiter.raas.model.HttpRequestDto;
 import io.github.poshjosh.ratelimiter.raas.model.RateDto;
 import io.github.poshjosh.ratelimiter.raas.model.RatesDto;
+import io.github.poshjosh.ratelimiter.raas.persistence.InitializeS3Bucket;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,8 +24,9 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
+@InitializeS3Bucket
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class RateConditionHeaderTest extends RedisSetup {
+class RateConditionHeaderTest implements RedisInitializer {
 
     @LocalServerPort
     private int port;

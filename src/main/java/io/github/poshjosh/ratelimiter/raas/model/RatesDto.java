@@ -3,7 +3,6 @@ package io.github.poshjosh.ratelimiter.raas.model;
 import io.github.poshjosh.ratelimiter.raas.model.validation.RatesOperatorConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.*;
@@ -21,7 +20,6 @@ public class RatesDto {
     private String id;
 
     @Builder.Default
-    @NotNull
     private Operator operator = Operator.NONE;
 
     @NotEmpty(message = "required.rates")

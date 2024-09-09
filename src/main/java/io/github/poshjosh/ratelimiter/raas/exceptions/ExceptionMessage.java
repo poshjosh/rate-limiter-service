@@ -3,6 +3,7 @@ package io.github.poshjosh.ratelimiter.raas.exceptions;
 import org.springframework.http.HttpStatus;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public enum ExceptionMessage implements ExceptionMessageKey {
     RATES_NOT_FOUND(ExceptionMessageKey.RATES_NOT_FOUND, HttpStatus.NOT_FOUND),
@@ -23,5 +24,14 @@ public enum ExceptionMessage implements ExceptionMessageKey {
     ExceptionMessage(String key, HttpStatus status) {
         this.key = Objects.requireNonNull(key);
         this.status = Objects.requireNonNull(status);
+    }
+
+    public static Optional<ExceptionMessage> ofKey(String key) {
+        for (ExceptionMessage message : values()) {
+            if (message.key.equals(key)) {
+                return Optional.of(message);
+            }
+        }
+        return Optional.empty();
     }
 }

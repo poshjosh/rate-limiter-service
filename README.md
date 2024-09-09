@@ -33,15 +33,14 @@ you could use one of the following client libraries.
 #### POST /rates/tree
 ```json
 {
-    "critical": {
-        "rates":[ {"rate":"99/s"} ],
-        "search": {
-            "rates":[ {"rate":"9/s"} ],
-            "when":"web.request.user.role = GUEST"  
-        },
-        "login": {
-            "rates":[ {"rate":"9/m"} ]
-        }
+    "id": "critical",
+    "rates":[ {"rate":"99/s"} ],
+    "search": {
+        "rates":[ {"rate":"9/s"} ],
+        "when":"web.request.user.role = GUEST"  
+    },
+    "login": {
+        "rates":[ {"rate":"9/m"} ]
     }
 }
 ```
@@ -70,6 +69,21 @@ This project contains a Docker Compose file named `compose.yaml`.
 In this file, the following services have been defined:
 
 * redis: [`redis:latest`](https://hub.docker.com/_/redis)
+
+## Testing
+
+We use LocalStack and Testcontainers.
+
+* [LocalStack](https://www.localstack.cloud/) is a cloud service emulator that enables local 
+development and testing of AWS services, without the need for connecting to a remote cloud 
+provider. During tests, we provision the required S3 bucket inside this emulator.
+
+* [Testcontainers](https://java.testcontainers.org/modules/localstack/) is a library that 
+provides lightweight, throwaway instances of Docker containers for integration testing. 
+We start our LocalStack container via this library.
+
+An up and running Docker instance is needed to run the LocalStack emulator via Testcontainers.
+Ensure this requirement is met when running the test suite either locally or in a CI/CD pipeline.
 
 
 

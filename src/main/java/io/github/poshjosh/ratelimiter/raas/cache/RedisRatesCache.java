@@ -1,4 +1,4 @@
-package io.github.poshjosh.ratelimiter.raas.redis;
+package io.github.poshjosh.ratelimiter.raas.cache;
 
 import io.github.poshjosh.ratelimiter.model.Rates;
 import lombok.extern.slf4j.Slf4j;
