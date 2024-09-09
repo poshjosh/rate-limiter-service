@@ -19,9 +19,6 @@ services:
     volumes:
       # Other services access the Redis dump.rdb file from this directory
       - "redis-cache:${APP_REDIS_DATA_DIR:-/data}"
-#      - type: bind
-#        source: "redis-cache"
-#        target: "${APP_REDIS_DATA_DIR:-/data}"
 
   ratelimiter-service:
     build:
@@ -45,12 +42,13 @@ services:
       JVM_XMS: "${JVM_XMS:-1g}"
       JVM_XMX: "${JVM_XMX:-1g}"
       SERVER_PORT: "${SERVER_PORT:-8080}"
+      SPRING_CACHE_TYPE: "${SPRING_CACHE_TYPE:-redis}"
+      SPRING_CACHE_REDIS_CACHE_NULL_VALUES: "${SPRING_CACHE_REDIS_CACHE_NULL_VALUES:-false}"
       SPRING_DATA_REDIS_HOST: "${SPRING_DATA_REDIS_HOST:-redis-cache}"
       SPRING_DATA_REDIS_PORT: "${SPRING_DATA_REDIS_PORT:-6379}"
       SPRING_DATA_REDIS_DATABASE: "${SPRING_DATA_REDIS_DATABASE:-0}"
       SPRING_DATA_REDIS_TIMEOUT: "${SPRING_DATA_REDIS_TIMEOUT:-60000}"
-      SPRING_CACHE_TYPE: "${SPRING_CACHE_TYPE:-redis}"
-      SPRING_CACHE_REDIS_CACHE_NULL_VALUES: "${SPRING_CACHE_REDIS_CACHE_NULL_VALUES:-false}"
+#      logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter: "debug"
 #      logging.level.io.github.poshjosh.ratelimiter.raas.persistence: "debug"
 #      logging.level.org.springframework: "debug"
 #      logging.level.io.github.poshjosh: "debug"
