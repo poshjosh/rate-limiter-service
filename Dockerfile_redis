@@ -1,17 +1,10 @@
-FROM openjdk:17-alpine
+FROM redis:7.0-alpine
 
 LABEL io.github.poshosh.image.authors="https://github.com/poshjosh"
-
-WORKDIR /raas
 #
 #RUN addgroup -S spring && adduser -S spring -G spring
 #USER spring:spring
 
-COPY . .
-
-RUN mkdir -p /app/lib
-
-ARG APP_VERSION
 ARG TIMEZONE=UTC
 
 # We do this so all containers can share the same timezone,
@@ -19,10 +12,6 @@ ARG TIMEZONE=UTC
 RUN apk add --no-cache tzdata \
     && ln -snf /usr/share/zoneinfo/"$TIMEZONE" /etc/localtime && echo "$TIMEZONE" > /etc/timezone
 
-RUN jar xf target/rate-limiter-service-${APP_VERSION}.jar  \
-    && cp -Rf BOOT-INF/lib /app \
-    && cp -Rf META-INF /app/META-INF \
-    && cp -Rf BOOT-INF/classes /app
-
-RUN chmod +x docker-entrypoint.sh
-ENTRYPOINT ["./docker-entrypoint.sh"]
+# --save 20 1 instructs the redis server to save the dataset to disk every 20 seconds,
+# if there are one or more writes
+CMD exec redis-server --save ${APP_REDIS_BACKUP_INTERVAL:-20} 1 --loglevel ${REDIS_LOGLEVEL:-notice}

@@ -12,7 +12,8 @@
     </parent>
 
     <artifactId>rate-limiter-service</artifactId>
-    <version>${env.APP_VERSION}</version>
+    <!-- Must match the version in shell/run.docker.sh -->
+    <version>0.0.1-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <description>Rate limiting as a service (RaaS)</description>
 
@@ -160,7 +161,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring.boot.starter.version}</version>
                 <configuration>
-                    <mainClass>${env.APP_MAIN_CLASS}</mainClass>
+                    <mainClass>io.github.poshjosh.ratelimiter.raas.RateLimiterServiceApplication</mainClass>
                     <layout>JAR</layout>
                     <excludes>
                         <exclude>

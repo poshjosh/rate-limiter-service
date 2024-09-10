@@ -1,0 +1,26 @@
+# Supported Environment Variables
+
+```dotenv
+APP_AWS_S3_BUCKET_NAME=[REQUIRED]
+APP_REDIS_DATA_DIR="[OPTIONAL, default=/data]"
+APP_REDIS_BACKUP_INTERVAL="[OPTIONAL, default=20]"
+
+JVM_XMS="[OPTIONAL, default=256m]"
+JVM_XMX="[OPTIONAL, default=1g]"
+
+REDIS_LOGLEVEL="[OPTIONAL, default=notice, permitted=debug|verbose|notice|warning]"
+
+# Slows down requests. E.g. from ~35ms to ~105ms
+SECURITY_USER_NAME=[OPTIONAL]
+SECURITY_USER_PASSWORD=[OPTIONAL]
+SERVER_PORT="[OPTIONAL, default=5000]"
+
+SPRING_CLOUD_AWS_CREDENTIALS_ACCESS_KEY=[REQUIRED]
+SPRING_CLOUD_AWS_CREDENTIALS_SECRET_KEY=[REQUIRED]
+SPRING_CLOUD_AWS_S3_REGION="[OPTIONAL, default=us-east-2]"
+
+SPRING_PROFILES_ACTIVE=[OPTIONAL]
+
+# Spring data redis related properties e.g SPRING_DATA_REDIS_HOST
+SPRING_DATA_REDIS_*=[OPTIONAL]
+```

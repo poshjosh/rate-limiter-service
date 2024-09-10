@@ -15,9 +15,6 @@ fi
 if [ -n "$JVM_GC" ]; then
   JAVA_OPTS="$JAVA_OPTS -XX:$JVM_GC"
 fi
-if [ -n "$JAVA_RANDOM" ]; then
-  JAVA_OPTS="$JAVA_OPTS $JAVA_RANDOM"
-fi
 #########################################################
 # set params
 #########################################################
@@ -33,5 +30,6 @@ if [ -n "$OTHER_PARAMS" ];  then
     PARAMS="$PARAMS $OTHER_PARAMS"
 fi
 
-exec java $JAVA_OPTS -cp "/app:/app/classes:/app/lib/*" $APP_MAIN_CLASS $PARAMS
+exec java $JAVA_OPTS -cp "/app:/app/classes:/app/lib/*" \
+    io.github.poshjosh.ratelimiter.raas.RateLimiterServiceApplication $PARAMS
 

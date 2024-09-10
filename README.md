@@ -74,6 +74,9 @@ You could enable basic authentication by simply setting the following properties
 (about 3 times. E.g. from 35ms to 105ms). Rate limiting should not slow down the actual
 processing of requests.
 
+## Supported Environment Variables
+
+See [Supported Environment Variables](./docs/environment.md)
 
 ## Docker Compose support
 
