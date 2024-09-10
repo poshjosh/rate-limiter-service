@@ -14,4 +14,5 @@ RUN apk add --no-cache tzdata \
 
 # --save 20 1 instructs the redis server to save the dataset to disk every 20 seconds,
 # if there are one or more writes
-CMD exec redis-server --save ${APP_REDIS_BACKUP_INTERVAL:-20} 1 --loglevel ${REDIS_LOGLEVEL:-notice}
+CMD exec redis-server --port ${SPRING_DATA_REDIS_PORT:-6379} \
+    --save ${APP_REDIS_BACKUP_INTERVAL:-20} 1 --loglevel ${REDIS_LOGLEVEL:-notice}
