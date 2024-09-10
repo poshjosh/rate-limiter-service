@@ -63,6 +63,18 @@ Return `true` if the identified limit has permits available, otherwise `false`.
 - `web.request.user.role = GUEST` - The endpoint is rate limited if the user role is GUEST. For more 
 on rate conditions see [Rate Condition Expressions](https://github.com/poshjosh/rate-limiter-web-core/blob/master/docs/RATE-CONDITION-EXPRESSION-LANGUAGE.md).
 
+## Authentication
+
+You could enable basic authentication by simply setting the following properties:
+
+- `security.user.name`
+- `security.user.password`
+
+:warning: Basic authentication is not recommended because is increases request time significantly
+(about 3 times. E.g. from 35ms to 105ms). Rate limiting should not slow down the actual
+processing of requests.
+
+
 ## Docker Compose support
 
 This project contains a Docker Compose file named `compose.yaml`.

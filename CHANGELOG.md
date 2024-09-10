@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Backup of Redis data to AWS S3
-- Dockerize the main application
+- Add optional basic authentication.
+- Backup of Redis data to AWS S3.
+- Dockerize the main application.
+- Implement i18n.
 - CHANGELOG.md
 - initial commit

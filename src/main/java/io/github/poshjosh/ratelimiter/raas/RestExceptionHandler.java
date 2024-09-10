@@ -19,8 +19,6 @@ import java.util.*;
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
-    private final String defaultMessage = "Error";
-
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers,
@@ -102,7 +100,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     private String getMessage(String key, Locale locale) {
         MessageSource messageSource = getMessageSource();
-        return messageSource == null ? defaultMessage :
-                messageSource.getMessage(key, null, defaultMessage, locale);
+        return messageSource == null ? "error.message" : // No MessageSource. Let the developer know
+                messageSource.getMessage(key, null, key, locale);
     }
 }
