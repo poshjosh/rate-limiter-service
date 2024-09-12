@@ -14,6 +14,7 @@ public class RedisBandwidthCache implements BandwidthsStore<String> {
         this.redisTemplate = redisTemplate;
     }
 
+    @Override
     public Bandwidth get(String key) {
         key = keyOf(key);
         final long startTime = System.currentTimeMillis();
@@ -23,21 +24,13 @@ public class RedisBandwidthCache implements BandwidthsStore<String> {
         return bandwidth;
     }
 
+    @Override
     public void put(String key, Bandwidth bandwidth) {
         key = keyOf(key);
         final long startTime = System.currentTimeMillis();
         redisTemplate.opsForValue().set(key, bandwidth);
         final long endTime = System.currentTimeMillis();
         log.trace("#set to cache in {} millis, {} = {}", (endTime - startTime), key, bandwidth);
-    }
-
-    public Bandwidth remove(String key) {
-        key = keyOf(key);
-        final long startTime = System.currentTimeMillis();
-        final Bandwidth bandwidth = redisTemplate.opsForValue().getAndDelete(key);
-        final long endTime = System.currentTimeMillis();
-        log.trace("#remove from cache in {} millis, {} = {}", (endTime - startTime), key, bandwidth);
-        return bandwidth;
     }
 
     private String keyOf(Object id) {

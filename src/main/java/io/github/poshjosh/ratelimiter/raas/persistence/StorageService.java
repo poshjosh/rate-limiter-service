@@ -23,10 +23,6 @@ public class StorageService {
     public StorageService(S3Template s3Template, AwsS3BucketProperties awsS3BucketProperties) {
         this.s3Template = Objects.requireNonNull(s3Template);
         this.awsS3BucketProperties = Objects.requireNonNull(awsS3BucketProperties);
-        if (!s3Template.bucketExists(awsS3BucketProperties.getBucketName())) {
-            throw new IllegalArgumentException(
-                    "Bucket does not exist: " + awsS3BucketProperties.getBucketName());
-        }
     }
 
     public void save(String objectKey, Path path) throws IOException{

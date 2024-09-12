@@ -55,13 +55,12 @@ public class RedisRatesCache {
         log.trace("#set to cache in {} millis, {} = {}", (endTime - startTime), key, rates);
     }
 
-    public Rates remove(String key) {
+    public void remove(String key) {
         key = keyOf(key);
         final long startTime = System.currentTimeMillis();
-        final Rates rates = redisTemplate.opsForValue().getAndDelete(key);
+        redisTemplate.delete(key);
         final long endTime = System.currentTimeMillis();
-        log.trace("#remove from cache in {} millis, {} = {}", (endTime - startTime), key, rates);
-        return rates;
+        log.trace("#remove from cache in {} millis, {}", (endTime - startTime), key);
     }
 
     private String keyOf(Object id) {

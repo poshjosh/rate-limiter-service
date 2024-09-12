@@ -6,12 +6,12 @@ import java.util.Objects;
 import java.util.Optional;
 
 public enum ExceptionMessage implements ExceptionMessageKey {
-    RATES_NOT_FOUND(ExceptionMessageKey.RATES_NOT_FOUND, HttpStatus.NOT_FOUND),
-    BAD_REQUEST(ExceptionMessageKey.BAD_REQUEST),
+    NOT_FOUND_RATES(ExceptionMessageKey.RATES_NOT_FOUND, HttpStatus.NOT_FOUND),
+    BAD_REQUEST(ExceptionMessageKey.REQUEST_BAD),
     BAD_REQUEST_PERMITS(INVALID_FORMAT_PERMITS, HttpStatus.BAD_REQUEST),
     BAD_REQUEST_RATES(INVALID_FORMAT_RATES, HttpStatus.BAD_REQUEST),
-    FORBIDDEN(ExceptionMessageKey.FORBIDDEN),
-    TOO_MANY_REQUESTS(ExceptionMessageKey.TOO_MANY_REQUESTS);
+    FORBIDDEN(ExceptionMessageKey.REQUEST_FORBIDDEN),
+    TOO_MANY_REQUESTS(ExceptionMessageKey.REQUEST_TOO_MANY);
 
     public final String key;
     public final HttpStatus status;

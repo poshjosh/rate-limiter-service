@@ -45,14 +45,14 @@ public class RateResource {
     public RatesDto getRates(@PathVariable String id) throws RaasException {
         log.debug("Getting rates for id: {}", id);
         return rateService.findRates(id)
-                .orElseThrow(() -> new RaasException(ExceptionMessage.RATES_NOT_FOUND));
+                .orElseThrow(() -> new RaasException(ExceptionMessage.NOT_FOUND_RATES));
     }
 
     @DeleteMapping({PATH+"/{id}", PATH+"/{id}/"})
     public ResponseEntity<Boolean> deleteLimit(@PathVariable String id) throws RaasException {
         log.debug("Deleting limit for id: {}", id);
         if(rateService.deleteRates(id).isEmpty()) {
-            throw new RaasException(ExceptionMessage.RATES_NOT_FOUND);
+            throw new RaasException(ExceptionMessage.NOT_FOUND_RATES);
         }
         return ResponseEntity.ok(Boolean.TRUE);
     }
