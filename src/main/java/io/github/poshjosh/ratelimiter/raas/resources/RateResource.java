@@ -49,7 +49,7 @@ public class RateResource {
     }
 
     @DeleteMapping({PATH+"/{id}", PATH+"/{id}/"})
-    public ResponseEntity<Boolean> deleteLimit(@PathVariable String id) throws RaasException {
+    public ResponseEntity<Boolean> deleteRate(@PathVariable String id) throws RaasException {
         log.debug("Deleting limit for id: {}", id);
         if(rateService.deleteRates(id).isEmpty()) {
             throw new RaasException(ExceptionMessage.NOT_FOUND_RATES);
