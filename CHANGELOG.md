@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Endpoint for adding rates and acquiring permit in one request.
+- Scripts for deploying to AWS.
 - Dockerfile for redis cache
 - Optional basic authentication.
 - Backup of Redis data to AWS S3.

@@ -1,12 +1,12 @@
 package io.github.poshjosh.ratelimiter.raas;
 
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import io.github.poshjosh.ratelimiter.raas.cache.RedisInitializer;
-import io.github.poshjosh.ratelimiter.raas.model.HttpRequestDto;
 import io.github.poshjosh.ratelimiter.raas.model.RateDto;
 import io.github.poshjosh.ratelimiter.raas.model.RatesDto;
 import io.github.poshjosh.ratelimiter.raas.persistence.InitializeS3Bucket;
@@ -55,17 +55,17 @@ class HappyPathMockTest implements RedisInitializer {
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(rateId));
 
-        when(permitService.isAvailable(rateId, HttpRequestDto.NOOP)).thenReturn(true);
+        when(permitService.isAvailable(anyString(), isNull())).thenReturn(true);
         mockMvc.perform(patch(PermitResource.PATH + "/available?rateId=" + rateId).contentType(contentType))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(content().string("true"));
 
-        when(permitService.tryAcquire(rateId, 1, HttpRequestDto.NOOP)).thenReturn(true);
+        when(permitService.tryAcquire(anyString(), anyInt(), isNull())).thenReturn(true);
         mockMvc.perform(patch(PermitResource.PATH + "/acquire?rateId=" + rateId).contentType(contentType))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(content().string("true"));
 
-        when(permitService.tryAcquire(rateId, 1, HttpRequestDto.NOOP)).thenReturn(false);
+        when(permitService.tryAcquire(anyString(), anyInt(), isNull())).thenReturn(false);
         mockMvc.perform(patch(PermitResource.PATH + "/acquire?rateId=" + rateId).contentType(contentType))
                 .andDo(print()).andExpect(status().isTooManyRequests())
                 .andExpect(jsonPath("$.status").value(429));

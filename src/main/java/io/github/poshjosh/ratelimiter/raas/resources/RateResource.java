@@ -35,7 +35,8 @@ public class RateResource {
     }
 
     @PostMapping(value = {PATH, PATH+"/"})
-    public ResponseEntity<RatesDto> postRates(@Valid @RequestBody RatesDto ratesDto) {
+    public ResponseEntity<RatesDto> postRates(@Valid @RequestBody RatesDto ratesDto)
+            throws RaasException {
         log.debug("Posting: {}", ratesDto);
         ratesDto = rateService.addRates(ratesDto);
         return ResponseEntity.created(URI.create(PATH + "/" + ratesDto.getId())).body(ratesDto);

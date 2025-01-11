@@ -8,14 +8,28 @@ import java.util.*;
 
 @Component
 public class HttpRequestMapper {
-    public RequestInfo toRequestInfo(HttpRequestDto dto) {
-        return new HttpRequestInfo(dto);
+
+    private static final HttpRequestDto NOOP = HttpRequestDto.builder()
+        .contextPath("").method("").requestUri("").servletPath("").build();
+
+    public RequestInfo toRequestInfo(/* @Nullable */ HttpRequestDto dto,
+            Map<String, List<String>> additionalHeaders) {
+        return new HttpRequestInfo(dto == null ? NOOP : dto, additionalHeaders);
     }
 
     private static final class HttpRequestInfo implements RequestInfo {
         private final HttpRequestDto httpRequestDto;
-        private HttpRequestInfo(HttpRequestDto httpRequestDto) {
+        private final Map<String, List<String>> additionalHeaders;
+        private HttpRequestInfo(HttpRequestDto httpRequestDto,
+                Map<String, List<String>> additionalHeaders) {
+            if (httpRequestDto.getHeaders() != null) {
+                httpRequestDto.getHeaders().keySet().stream().filter(additionalHeaders::containsKey)
+                        .findAny().ifPresent(k -> {
+                            throw new IllegalArgumentException("Trying to add existing header: " + k);
+                        });
+            }
             this.httpRequestDto = Objects.requireNonNull(httpRequestDto);
+            this.additionalHeaders = Objects.requireNonNull(additionalHeaders);
         }
 
         @Override public String getAuthScheme(String resultIfNone) {
@@ -39,6 +53,14 @@ public class HttpRequestMapper {
         }
 
         @Override public List<String> getHeaders(String name) {
+            List<String> headers = getOriginalHeaders(name);
+            if (headers != null) {
+                return headers;
+            }
+            return additionalHeaders.get(name);
+        }
+
+        private List<String> getOriginalHeaders(String name) {
             Map<String, List<String>> headers = httpRequestDto.getHeaders();
             if (headers == null) {
                 return null;

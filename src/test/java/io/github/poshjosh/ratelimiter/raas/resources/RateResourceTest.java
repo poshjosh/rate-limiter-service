@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @InitializeS3Bucket
 @AutoConfigureMockMvc
-class RateSourceTest implements RedisInitializer {
+class RateResourceTest implements RedisInitializer {
 
     private static final MediaType contentType = MediaType.APPLICATION_JSON;
     private static final String idError = "required.id";

@@ -3,6 +3,7 @@ package io.github.poshjosh.ratelimiter.raas.services;
 import io.github.poshjosh.ratelimiter.matcher.MatchContext;
 import io.github.poshjosh.ratelimiter.RateLimiterRegistry;
 import io.github.poshjosh.ratelimiter.model.Rates;
+import io.github.poshjosh.ratelimiter.raas.exceptions.ExceptionMessage;
 import io.github.poshjosh.ratelimiter.raas.exceptions.RaasException;
 import io.github.poshjosh.ratelimiter.raas.model.*;
 import io.github.poshjosh.ratelimiter.raas.cache.RedisRatesCache;
@@ -47,13 +48,24 @@ public class RateService {
         return rates;
     }
 
-    public RatesDto addRates(RatesDto ratesDto) {
+    public RatesDto addRates(RatesDto ratesDto) throws RaasException {
         final String id = ratesDto.getId();
         if (rateLimiterRegistry.isRegistered(id)) {
-            rateLimiterRegistry.deregister(id);
-            // remove from cache, is not needed because our put below
-            // basically replaces any old value
+            throw new RaasException(ExceptionMessage.BAD_REQUEST_RATES);
         }
+        return doAddRates(ratesDto);
+    }
+
+    public void addRatesIfNotExisting(RatesDto ratesDto) {
+        final String id = ratesDto.getId();
+        if (rateLimiterRegistry.isRegistered(id)) {
+            return;
+        }
+        doAddRates(ratesDto);
+    }
+
+    private RatesDto doAddRates(RatesDto ratesDto) {
+        final String id = ratesDto.getId();
         final Rates rates = rateMapper.toEntity(ratesDto);
         rateLimiterRegistry.register(rates);
         ratesCache.put(id, rates);

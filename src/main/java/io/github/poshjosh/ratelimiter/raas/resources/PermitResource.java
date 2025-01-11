@@ -3,7 +3,10 @@ package io.github.poshjosh.ratelimiter.raas.resources;
 import io.github.poshjosh.ratelimiter.raas.exceptions.ExceptionMessage;
 import io.github.poshjosh.ratelimiter.raas.exceptions.RaasException;
 import io.github.poshjosh.ratelimiter.raas.model.HttpRequestDto;
+import io.github.poshjosh.ratelimiter.raas.model.LimitDto;
+import io.github.poshjosh.ratelimiter.raas.model.RatesDto;
 import io.github.poshjosh.ratelimiter.raas.services.PermitService;
+import io.github.poshjosh.ratelimiter.raas.services.RateService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +17,21 @@ import org.springframework.web.bind.annotation.*;
 public class PermitResource {
     public static final String PATH = "/permits";
     private final PermitService permitService;
+    private final RateService rateService;
 
-    public PermitResource(PermitService permitService) {
+    public PermitResource(PermitService permitService, RateService rateService) {
         this.permitService = permitService;
+        this.rateService = rateService;
+    }
+
+    @RequestMapping(value = {PATH+"/limit", PATH+"/limit/"})
+    public ResponseEntity<Boolean> addAndAcquire(
+            @Valid @RequestBody(required = false) LimitDto limitDto) throws
+            RaasException {
+        RatesDto ratesDto = limitDto.getLimit();
+        rateService.addRatesIfNotExisting(ratesDto);
+        return tryToAcquire(ratesDto.getId(), limitDto.getPermits(),
+                limitDto.isAsync(), limitDto.getRequest());
     }
 
     @RequestMapping(
@@ -27,10 +42,6 @@ public class PermitResource {
             @RequestParam(name = "permits", defaultValue = "1") int permits,
             @RequestParam(name = "async", defaultValue = "false") boolean async,
             @Valid @RequestBody(required = false) HttpRequestDto httpRequestDto) throws RaasException {
-        if (httpRequestDto == null) {
-            httpRequestDto = HttpRequestDto.NOOP;
-        }
-
         if (async) {
             log.debug("Trying to async acquire {} permits from rate: {} for: {}",
                     permits, rateId, httpRequestDto);
@@ -57,9 +68,6 @@ public class PermitResource {
             @RequestParam("rateId") String rateId,
             @Valid @RequestBody(required = false) HttpRequestDto httpRequestDto) {
         log.debug("Checking if permits available for rate: {} for: {}", rateId, httpRequestDto);
-        if (httpRequestDto == null) {
-            httpRequestDto = HttpRequestDto.NOOP;
-        }
         return permitService.isAvailable(rateId, httpRequestDto);
     }
 }

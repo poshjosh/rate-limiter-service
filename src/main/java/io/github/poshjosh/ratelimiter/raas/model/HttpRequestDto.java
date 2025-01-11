@@ -12,8 +12,6 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HttpRequestDto {
-    public static final HttpRequestDto NOOP = HttpRequestDto.builder()
-            .contextPath("").method("").requestUri("").servletPath("").build();
     private String authType;
     private String characterEncoding;
     @NotNull(message = "required.contextPath")
