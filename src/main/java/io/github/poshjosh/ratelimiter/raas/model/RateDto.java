@@ -1,7 +1,7 @@
 package io.github.poshjosh.ratelimiter.raas.model;
 
 import io.github.poshjosh.ratelimiter.raas.model.validation.JavaClassConstraint;
-import io.github.poshjosh.ratelimiter.raas.model.validation.RateMismatchConstraint;
+import io.github.poshjosh.ratelimiter.raas.model.validation.RateDtoPermitsMismatchConstraint;
 import lombok.*;
 
 import java.time.Duration;
@@ -10,7 +10,7 @@ import java.time.Duration;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@RateMismatchConstraint
+@RateDtoPermitsMismatchConstraint
 public class RateDto {
     private static final Duration DEFAULT_DURATION = Duration.ofSeconds(1);
 

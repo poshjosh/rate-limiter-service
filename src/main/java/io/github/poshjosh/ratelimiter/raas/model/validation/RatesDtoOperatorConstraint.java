@@ -8,11 +8,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = RatesOperatorValidator.class)
+@Constraint(validatedBy = RatesDtoOperatorValidator.class)
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RatesOperatorConstraint {
-    String message() default "required.operator";
+public @interface RatesDtoOperatorConstraint {
+    String message() default "invalid.operator";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

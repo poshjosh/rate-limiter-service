@@ -5,7 +5,7 @@ import io.github.poshjosh.ratelimiter.raas.model.RatesDto;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class RatesOperatorValidator implements ConstraintValidator<RatesOperatorConstraint, Object> {
+public class RatesDtoOperatorValidator implements ConstraintValidator<RatesDtoOperatorConstraint, Object> {
     public boolean isValid(Object value, ConstraintValidatorContext context) {
         final RatesDto ratesDto = (RatesDto)value;
         final Operator operator = ratesDto.getOperator();

@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.ContentResultMatchers;
 
 import java.util.List;
 import java.util.Optional;
@@ -57,13 +58,11 @@ class HappyPathMockTest implements RedisInitializer {
 
         when(permitService.isAvailable(anyString(), isNull())).thenReturn(true);
         mockMvc.perform(patch(PermitResource.PATH + "/available?rateId=" + rateId).contentType(contentType))
-                .andDo(print()).andExpect(status().isOk())
-                .andExpect(content().string("true"));
+                .andDo(print()).andExpect(status().isOk());
 
         when(permitService.tryAcquire(anyString(), anyInt(), isNull())).thenReturn(true);
         mockMvc.perform(patch(PermitResource.PATH + "/acquire?rateId=" + rateId).contentType(contentType))
-                .andDo(print()).andExpect(status().isOk())
-                .andExpect(content().string("true"));
+                .andDo(print()).andExpect(status().isOk());
 
         when(permitService.tryAcquire(anyString(), anyInt(), isNull())).thenReturn(false);
         mockMvc.perform(patch(PermitResource.PATH + "/acquire?rateId=" + rateId).contentType(contentType))

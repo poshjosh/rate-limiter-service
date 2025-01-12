@@ -25,7 +25,7 @@ public class HttpRequestMapper {
             if (httpRequestDto.getHeaders() != null) {
                 httpRequestDto.getHeaders().keySet().stream().filter(additionalHeaders::containsKey)
                         .findAny().ifPresent(k -> {
-                            throw new IllegalArgumentException("Trying to add existing header: " + k);
+                            throw new IllegalArgumentException("May not add existing header: " + k);
                         });
             }
             this.httpRequestDto = Objects.requireNonNull(httpRequestDto);

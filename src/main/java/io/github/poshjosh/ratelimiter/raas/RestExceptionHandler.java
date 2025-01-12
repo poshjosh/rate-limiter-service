@@ -1,9 +1,11 @@
 package io.github.poshjosh.ratelimiter.raas;
 
+import io.github.poshjosh.ratelimiter.expression.ExpressionParseException;
 import io.github.poshjosh.ratelimiter.raas.exceptions.ExceptionMessage;
 import io.github.poshjosh.ratelimiter.raas.exceptions.RaasException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.*;
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.net.URI;
 import java.util.*;
 
+@Slf4j
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
@@ -33,6 +36,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return handle(ex, headers, status, request, keys.toArray(new String[0]));
     }
 
+    @ExceptionHandler ({ ExpressionParseException.class} )
+    protected ResponseEntity<Object> handleExpressionParseException(
+            ExpressionParseException ex, WebRequest request) {
+        log.debug("Error parsing rate condition", ex);
+        return handle(ex, request, ExceptionMessage.BAD_REQUEST_CONDITION);
+    }
+
     @ExceptionHandler ({ ConstraintViolationException.class} )
     protected ResponseEntity<Object> handleConstraintViolationException(
             ConstraintViolationException ex, WebRequest request) {
@@ -43,16 +53,19 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         if (keys.isEmpty()) {
             return handle(ex, request, ExceptionMessage.BAD_REQUEST);
         }
+        log.debug("Validation error", ex);
         return handle(ex, request, keys.toArray(new String[0]));
     }
 
     @ExceptionHandler({ RaasException.class })
     protected ResponseEntity<Object> handleRaasException(RaasException ex, WebRequest request) {
+        log.debug(ex.getLocalizedMessage(), ex);
         return handle(ex, request, ex.getExceptionMessage());
     }
 
     @ExceptionHandler({ AccessDeniedException.class })
     protected ResponseEntity<Object> handleAccessDeniedException(Exception ex, WebRequest request) {
+        log.debug("Access denied", ex);
         return handle(ex, request, ExceptionMessage.FORBIDDEN);
     }
 

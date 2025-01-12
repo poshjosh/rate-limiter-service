@@ -25,7 +25,7 @@ public class PermitResource {
     }
 
     @RequestMapping(value = {PATH+"/limit", PATH+"/limit/"})
-    public ResponseEntity<Boolean> addAndAcquire(
+    public ResponseEntity<Void> addAndAcquire(
             @Valid @RequestBody(required = false) LimitDto limitDto) throws
             RaasException {
         RatesDto ratesDto = limitDto.getLimit();
@@ -37,7 +37,7 @@ public class PermitResource {
     @RequestMapping(
             path={PATH+"/acquire", PATH+"/acquire/"},
             method={ RequestMethod.PATCH, RequestMethod.PUT, RequestMethod.GET })
-    public ResponseEntity<Boolean> tryToAcquire(
+    public ResponseEntity<Void> tryToAcquire(
             @RequestParam("rateId") String rateId,
             @RequestParam(name = "permits", defaultValue = "1") int permits,
             @RequestParam(name = "async", defaultValue = "false") boolean async,
@@ -54,9 +54,9 @@ public class PermitResource {
         return toResponse(permitService.tryAcquire(rateId, permits, httpRequestDto));
     }
 
-    private ResponseEntity<Boolean> toResponse(boolean success) throws RaasException {
+    private ResponseEntity<Void> toResponse(boolean success) throws RaasException {
         if (success) {
-            return ResponseEntity.ok(Boolean.TRUE);
+            return ResponseEntity.ok(null);
         }
         throw new RaasException(ExceptionMessage.TOO_MANY_REQUESTS);
     }

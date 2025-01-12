@@ -10,9 +10,13 @@ cd .. || exit 1
 
 export JAVA_HOME=~/.sdkman/candidates/java/17
 
-set -a
-source .env
-set +a
+if [ -f ".env" ]; then
+    echo "Exporting environment"
+
+    set -a
+    source .env
+    set +a
+fi
 
 if [ "${DEBUG}" = "true" ] || [ "$DEBUG" = true ]; then
     DEBUG="-X -e"

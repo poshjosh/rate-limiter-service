@@ -8,11 +8,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = RatesOperatorValidator.class)
+@Constraint(validatedBy = RateDtoPermitsMismatchValidator.class)
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RateMismatchConstraint {
-    String message() default "mismatched.rates";
+public @interface RateDtoPermitsMismatchConstraint {
+    String message() default "invalid.permits";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

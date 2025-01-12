@@ -1,6 +1,6 @@
 package io.github.poshjosh.ratelimiter.raas.model;
 
-import io.github.poshjosh.ratelimiter.raas.model.validation.RatesOperatorConstraint;
+import io.github.poshjosh.ratelimiter.raas.model.validation.RatesDtoOperatorConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
@@ -11,7 +11,7 @@ import java.util.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@RatesOperatorConstraint
+@RatesDtoOperatorConstraint
 public class RatesDto {
 
     private String parentId;

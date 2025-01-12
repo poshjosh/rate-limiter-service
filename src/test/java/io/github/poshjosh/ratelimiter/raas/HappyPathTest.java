@@ -52,12 +52,12 @@ class HappyPathTest implements RedisInitializer {
         assertThat(result.getId()).isEqualTo(rateId);
 
         assertThat(restTemplate.exchange(
-                        url + "/permits/available?rateId=" + rateId, HttpMethod.PUT, null, Boolean.class)
-                .getBody()).isTrue();
+                        url + "/permits/available?rateId=" + rateId, HttpMethod.PUT, null, Object.class)
+                .getStatusCode()).isEqualTo(HttpStatus.OK);
 
         assertThat(restTemplate.exchange(
-                url + "/permits/acquire?rateId=" + rateId, HttpMethod.PUT, null, Boolean.class)
-                .getBody()).isTrue();
+                url + "/permits/acquire?rateId=" + rateId, HttpMethod.PUT, null, Object.class)
+                .getStatusCode()).isEqualTo(HttpStatus.OK);
 
         ResponseEntity<ProblemDetail> response = restTemplate.exchange(
                 url + "/permits/acquire?rateId=" + rateId, HttpMethod.PUT, null, ProblemDetail.class);
