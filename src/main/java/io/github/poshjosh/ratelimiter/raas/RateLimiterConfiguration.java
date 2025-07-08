@@ -29,6 +29,12 @@ public class RateLimiterConfiguration {
     @Bean
     public RateLimiterContext<RequestInfo> rateLimiterContext(
             RedisBandwidthCache bandwidthCache, RedisRatesCache ratesCache) {
+        // Why do we have 2 caches? A bandwidth cache and a rates cache?
+        // The bandwidth cache is used to store the usage rate of resources (i.e. in bandwidths).
+        // The bandwidth changes with use.
+        // However, the rates cache is used to store the rates defined by consumers.
+        // The rates defined by consumers does not change with use, but when the consumer
+        // updates them.
         return RateLimiterContext.<RequestInfo>builder()
                 .store(bandwidthCache)
                 .rates(ratesCache.getAll())
