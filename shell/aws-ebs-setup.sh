@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# See https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/java-quickstart.html
 
 set -euo pipefail
 
@@ -14,7 +15,7 @@ cd ..
 ###############################################################
 # pip install awsebcli
 
-eb init "${APP_NAME}" --platform "${JAVA_PLATFORM}" --region "${AWS_REGION}"
+eb init --platform "${JAVA_PLATFORM}" "${APP_NAME}" --region "${AWS_REGION}"
 
 eb create "${AWS_EBS_ENV}"
 
