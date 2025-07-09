@@ -49,6 +49,11 @@ public class RateService {
     }
 
     public RatesDto addRates(RatesDto ratesDto) throws RaasException {
+        final String parentId = ratesDto.getParentId();
+        if (parentId != null && !parentId.isBlank()
+                && !rateLimiterRegistry.isRegistered(parentId)) {
+            throw new RaasException(ExceptionMessage.BAD_REQUEST_RATES);
+        }
         final String id = ratesDto.getId();
         if (rateLimiterRegistry.isRegistered(id)) {
             throw new RaasException(ExceptionMessage.BAD_REQUEST_RATES);
