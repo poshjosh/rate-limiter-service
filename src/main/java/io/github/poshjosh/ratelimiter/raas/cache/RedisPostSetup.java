@@ -14,10 +14,11 @@ import java.util.Set;
 public class RedisPostSetup {
     public RedisPostSetup(RedisTemplate<String, Bandwidth> redisTemplate) {
         Set<String> keys = redisTemplate.keys("*");
-        if (keys != null) {
-            log.info("=========================== DELETING Cache ===========================");
-            keys.forEach(key -> log.info("{} = {}", key, redisTemplate.opsForValue().getAndDelete(key)));
-            log.info("======================================================================");
+        if (keys.isEmpty()) {
+            return;
         }
+        log.info("=========================== DELETING Cache ===========================");
+        keys.forEach(key -> log.info("{} = {}", key, redisTemplate.opsForValue().getAndDelete(key)));
+        log.info("======================================================================");
     }
 }

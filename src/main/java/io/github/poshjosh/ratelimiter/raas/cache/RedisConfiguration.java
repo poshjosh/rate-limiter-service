@@ -44,7 +44,7 @@ public class RedisConfiguration {
     }
 
     @Bean
-    public RedisBandwidthCache redisBandwidthStore(
+    public RedisBandwidthCache redisBandwidthCache(
             @Autowired @Qualifier("redisBandwidthTemplate")
             RedisTemplate<String, Bandwidth> redisBandwidthTemplate) {
         return new RedisBandwidthCache(redisBandwidthTemplate);
