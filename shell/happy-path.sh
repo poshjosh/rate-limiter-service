@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# The service must be running before executing this script.
+
 # On macos, we need to install coreutils to get gnu date
 # This next line is done to use gnu date as default.
 # See https://apple.stackexchange.com/questions/135742/time-in-milliseconds-since-epoch-in-the-terminal
@@ -14,7 +16,7 @@ function log() {
   printf "%s %s\n" "$(date +'%T.%3N')" "$1"
 }
 
-data="{ \"id\":\"${RATE_ID}\", \"rates\":[{ \"rate\":\"1/s\" }] }"
+data="{\"id\":\"${RATE_ID}\", \"rates\":[{ \"rate\":\"1/s\" }] }"
 log ""
 log "POST application/json ${data}"
 log "Expected: ${data}"
@@ -34,7 +36,7 @@ log "  Actual: ${output}"
 url="${PERMITS_URL}/acquire?rateId=${RATE_ID}&permits=1"
 log ""
 log "PATCH ${url}"
-log "Expected: true"
+log "Expected: " # No content
 output=$(curl -s -X PATCH "${url}")
 log "  Actual: ${output}"
 

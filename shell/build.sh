@@ -29,7 +29,6 @@ fi
 
 # shellcheck disable=SC2086
 # We disable the need for double quotes here, as using double quotes caused errors.
-# TODO - Tests are not running - Fix it
 if [ -z ${GPG_PASS+x} ] || [ "$GPG_PASS" = "" ]; then
     mvn -s "$MVN_SETTINGS_FILE" clean verify $DEBUG -Dspring.profiles.active=test
     echo "Build SUCCESSFUL"
