@@ -18,6 +18,8 @@ spring:
         secret-key: ${SPRING_CLOUD_AWS_CREDENTIALS_SECRET_KEY}
       s3:
         region: us-east-2
+  jackson:
+    default-property-inclusion: non_empty
 app:
   aws:
     s3:
