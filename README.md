@@ -85,6 +85,10 @@ In this file, the following services have been defined:
 
 * redis: [`redis:latest`](https://hub.docker.com/_/redis)
 
+## Local Development
+
+- To make life easier, use the scripts in the `shell` directory to: build, run, deploy etc.
+
 ## Testing
 
 We use LocalStack and Testcontainers.
